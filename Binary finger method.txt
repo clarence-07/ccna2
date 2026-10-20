@@ -1,0 +1,240 @@
+!@CoreTAAS
+
+conf t
+ ip routing
+ int fa0/9
+  no sw
+  no shut
+  ip add 10.182.45.60 255.255.255.224
+  end
+
+
+
+
+!@CoreBABA
+
+conf t
+ ip routing
+ int fa0/9
+  no sw
+  no shut
+  ip add 10.182.45.65 255.255.255.224
+  end
+
+
+
+
+
+
+
+
+
+
+1. 172.28.228.144/18		3rd, 64i	178.28.192.0		=	172.28.192.1-172.28.255.254	
+
+2. 172.28.228.144/21		3rd, 8i		178.28.224.0		=	172.28.224.1-172.28.231.254
+
+3. 172.28.228.144/23		
+
+
+
+
+
+
+
+
+
+
+
+
+1. Finance:
+ - 10.0.0.0/16 
+ - 87 users
+
+c = 7b
+s/32 = /25 
+
+(4th, 128i)
+I = 10.0.0.0/25
+
+Network =10.0.0.0/25 
+1stIp = 10.0.0.1
+Lvalid = 10.0.0.126
+Last = 10.0.0.127
+
+
+
+
+
+1. Admin
+ - 10.0.0.128 
+ - 27 users
+
+c = 5b
+s/32 = /27
+
+(4th, 32i)
+I = 10.0.0.128/27
+
+Network =10.0.0.128
+1stIp = 10.0.0.129
+Lvalid = 10.0.0.158
+Last = 10.0.0.159
+
+
+
+1. IT
+ - 10.0.0.160 
+ - 12 users
+
+c = 4b
+s/32 = /28
+
+(4th, 16i)
+I = 10.0.0.128/28
+
+Network =10.0.0.160/28
+1stIp = 10.0.0.161
+Lvalid = 10.0.0.174
+Last = 10.0.0.175
+
+
+
+
+
+
+
+
+
+
+
+1. Subnet for 189 users for Accenture.com using the IP address space of 192.168.128.0/18
+
+
+C:	189 = 8b
+S/32-:	18 = 24
+	(3rd,1i)
+
+I:192.168.129.0 /24
+
+Network: 192.168.129.0 /24
+1stIp: 192.168.129.1
+LastIP: 192.168.129.254
+Las/BR: 192.168.129.255
+
+NOT:192.168.130.0
+
+- Configure C1 as DHCP server
+- Reserve the first 20 IPs
+- Assign on VLAN 40
+- Make sure P1 is a DHCP Client
+
+--------------COMMAND--------------------
+
+!@P1
+conf t
+int e0/0
+no shut 
+ip add dhcp
+end
+show ip int br
+
+
+!@C1
+conf t
+vlan 40
+ name ACCENTURE
+ int vlan 40
+ no shut
+ ip add 192.168.129.1 255.255.255.0
+ ip dhcp excluded-address 192.168.129.1 192.168.129.20
+ ip dhcp pool ACCENTURE
+ network 192.168.129.0 255.255.255.0
+ default-router 192.168.129.1
+ domain-name ACCENTURE
+ dns-server 10.61.1.0
+ end
+
+
+!@A1 
+conf t
+ int e0/0
+  switchport mode access
+  switchport access vlan 40
+ end
+
+----------------------------------------------------------------
+
+2. Deploy for 2800 users for Concentrix.com using the IP address space of 172.16.32.0/19
+
+
+C:	2800 = 12b
+S/32-:	12b = 20
+	(3rd,16i)
+
+I:172.16.48.0 /20
+
+Network: 172.16.48.0 /20
+1stIp: 172.16.48.1
+LastIP: 172.16.63.254
+Las/BR: 172.16.63.255
+
+NOT:172.16.64.0/?
+
+- Configure C2 as DHCP server
+- Reserve the first 20 IPs
+- Assign on VLAN 50
+- Make sure P2 is a DHCP Client
+
+
+-----------COMMAND---------------------
+
+!@P2
+conf t
+int e1/0
+no shut 
+ip add dhcp
+end
+show ip int br
+
+!@C2
+conf t
+vlan 50
+ name CONCENTRIX
+ int vlan 50
+ no shut
+ ip add 172.16.48.1 255.255.240.0
+ exit
+ ip dhcp excluded-address 172.16.48.1 172.16.48.100
+ ip dhcp pool CONCENTRIX
+ network 172.16.48.0 255.255.240.0
+ default-router 172.16.48.1
+ domain-name CONCENTRIX
+ dns-server 10.61.1.0
+ end
+
+!@A2 
+conf t
+ int e1/0
+  switchport mode access
+  switchport access vlan 50
+ end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

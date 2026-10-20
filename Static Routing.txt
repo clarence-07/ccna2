@@ -1,0 +1,64 @@
+##### STATIC ROUTING ########
+
+[DESTINATION]   [MASK]   [NEXT-HOP/ EXIT INTERFACE]
+
+
+!@R1
+conf t
+ ip route 10.1.1.5 255.255.255.255 10.1.1.2
+ end
+ping 10.1.1.5
+
+
+
+### ACT: Configure a static HOST Route on R1 destined for 2.2.2.2
+
+
+!@R1
+conf t
+ ip route 2.2.2.2 255.255.255.255 10.1.1.2
+ end
+ping 2.2.2.2
+
+
+
+### ACT: Configure a static NETWORK Route on R1 destined for 10.1.1.6
+
+!@R1
+conf t`
+ ip route 10.1.1.4 255.255.255.252 10.1.1.2
+ end
+ping 10.1.1.6
+
+
+
+### ECHO REPLY###
+
+!@R3
+conf t
+ ip route 10.1.1.0 255.255.255.252 10.1.1.5
+ end
+ping 10.1.1.1
+
+
+### ACT: Configure a static NETWORK Route on R4 (10.1.1.10) & R1 (10.1.1.1) to ping each other
+
+!@R4
+conf t
+ ip route 10.1.1.0 255.255.255.252 10.1.1.2
+ end
+ping 10.1.1.10
+
+!@R1
+conf t
+ ip route 10.1.1.8 255.255.255.252 10.1.1.0
+ end
+
+
+
+### 
+!@R2
+conf t
+ ip route 10.1.1.8 255.255.255.252 10.1.1.6
+ end
+ping 10.1.1.10
